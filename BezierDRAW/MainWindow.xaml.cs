@@ -40,7 +40,7 @@ namespace BezierDRAW
 
         private void DrawMyBezierCurve()
         {
-            MyBezierCurve.CalculateMyBezier(0.0009765625, startBezierPoint, firstControlBezierPoint, secondControlBezierPoint, endBezierPoint);
+            MyBezierCurve.CalculateMyBezier(0.001953125, startBezierPoint, firstControlBezierPoint, secondControlBezierPoint, endBezierPoint);
             myPoints = MyBezierCurve.GetMyBezierPoints().ToArray();
             for(int i=0; i < myPoints.Length -1; i++)
             {
@@ -104,6 +104,41 @@ namespace BezierDRAW
                 myImage.Children.Add(line);
 
             }
+            else if (currentMode == "bezierline" && clickCounter == 2)
+            {
+                if (e.LeftButton == MouseButtonState.Pressed)
+                {
+                    myStatusText.Text = "Wybrano tryb rysowania krzywych Beziera. Podaj drugi punkt kontrolny.";
+                    endBezierPoint = e.GetPosition(myImage);
+                    secondControlBezierPoint = firstControlBezierPoint;
+                    clickCounter = 4;
+                    return;
+                }
+                Thread.Sleep(64);
+                if (line != null)
+                    myImage.Children.Remove(line);
+                if (myPoints != null)
+                {
+                    for (int i = 0; i < myPoints.Length - 1; i++)
+                        myImage.Children.RemoveAt(0);
+                }
+                endBezierPoint = e.GetPosition(myImage);
+                secondControlBezierPoint = firstControlBezierPoint;
+                DrawMyBezierCurve();
+            }
+            else if(currentMode == "bezierline" && clickCounter == 4)
+            {
+                Thread.Sleep(64);
+                if (line != null)
+                    myImage.Children.Remove(line);
+                if (myPoints != null)
+                {
+                    for (int i = 0; i < myPoints.Length - 1; i++)
+                        myImage.Children.RemoveAt(0);
+                }
+                secondControlBezierPoint = e.GetPosition(myImage);
+                DrawMyBezierCurve();
+            }
         }
 
         private void myImage_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -126,36 +161,21 @@ namespace BezierDRAW
             }
             else if (currentMode == "handline")
                 startPoint = e.GetPosition(myImage);
-            else if (currentMode == "bezierline")
+            else if (currentMode == "bezierline" && (clickCounter == 0 || clickCounter == 4)) 
             {
                 clickCounter++;
-                switch (clickCounter)
+                if (clickCounter == 1)
                 {
-                    case 1:
-                        myStatusText.Text = "Wybrano tryb rysowania krzywych Beziera. Podaj pierwszy punkt kontrolny.";
-                        startBezierPoint = e.GetPosition(myImage);
-                        startPoint = startBezierPoint;
-                        break;
-                    case 3:
-                        if(line!=null)
-                            myImage.Children.Remove(line);           
-                        myStatusText.Text = "Wybrano tryb rysowania krzywych Beziera. Podaj drugi punkt kontrolny.";
-                        endBezierPoint = e.GetPosition(myImage);
-                        secondControlBezierPoint = firstControlBezierPoint;
-                        DrawMyBezierCurve();
-                        break;
-                    case 4:
-                        for (int i = 0; i < myPoints.Length-1; i++)
-                            myImage.Children.RemoveAt(0);
-                        myStatusText.Text = "Wybrano tryb rysowania krzywych Beziera. Podaj punkt początkowy.";
-                        secondControlBezierPoint = e.GetPosition(myImage);
-                        DrawMyBezierCurve();
-                        clickCounter = 0;
-                        myPoints = null;
-                        line = null;
-                        break;
-                    default:
-                        break;
+                    myStatusText.Text = "Wybrano tryb rysowania krzywych Beziera. Podaj pierwszy punkt kontrolny.";
+                    startBezierPoint = e.GetPosition(myImage);
+                    startPoint = startBezierPoint;
+                }
+                if (clickCounter == 5)
+                {
+                    myStatusText.Text = "Wybrano tryb rysowania krzywych Beziera. Podaj punkt początkowy.";
+                    clickCounter = 0;
+                    myPoints = null;
+                    line = null;
                 }
             }
         }
