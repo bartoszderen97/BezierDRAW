@@ -40,7 +40,7 @@ namespace BezierDRAW
 
         private void DrawMyBezierCurve()
         {
-            MyBezierCurve.CalculateMyBezier(0.001953125, startBezierPoint, firstControlBezierPoint, secondControlBezierPoint, endBezierPoint);
+            MyBezierCurve.CalculateMyBezier(0.0078125, startBezierPoint, firstControlBezierPoint, secondControlBezierPoint, endBezierPoint);
             myPoints = MyBezierCurve.GetMyBezierPoints().ToArray();
             for(int i=0; i < myPoints.Length -1; i++)
             {
@@ -114,7 +114,7 @@ namespace BezierDRAW
                     clickCounter = 4;
                     return;
                 }
-                Thread.Sleep(64);
+
                 if (line != null)
                     myImage.Children.Remove(line);
                 if (myPoints != null)
@@ -128,7 +128,6 @@ namespace BezierDRAW
             }
             else if(currentMode == "bezierline" && clickCounter == 4)
             {
-                Thread.Sleep(64);
                 if (line != null)
                     myImage.Children.Remove(line);
                 if (myPoints != null)
