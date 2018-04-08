@@ -155,6 +155,7 @@ namespace BezierDRAW
                 else
                 {
                     myStatusText.Text = "Za szybko !!! Odczekaj dwie sekundy i podaj punkt początkowy jeszcze raz.";
+                    line = null;
                     clickCounter = 0;
                 }
             }
@@ -183,6 +184,14 @@ namespace BezierDRAW
         {
             Button mybtn = (Button)sender;
             clickCounter = 0;
+            if (line != null)
+                myImage.Children.Remove(line);
+            if (myPoints != null)
+            {
+                for (int i = 0; i < myPoints.Length - 1; i++)
+                    myImage.Children.RemoveAt(0);
+            }
+            myPoints = null;
             line = null;
             switch (mybtn.Name)
             {
