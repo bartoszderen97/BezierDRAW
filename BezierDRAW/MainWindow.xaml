@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:BezierDRAW"
         xmlns:Properties="clr-namespace:BezierDRAW.Properties" x:Name="mainWindow" x:Class="BezierDRAW.MainWindow"
         mc:Ignorable="d"
-        Title="BezierDRAW!" Height="766" Width="1024" ResizeMode="NoResize" Foreground="Black" Background="White" Icon="rsc/scribble.ico" WindowStartupLocation="CenterScreen" WindowStyle="ThreeDBorderWindow">
+        Title="BezierDRAW!" Height="766" Width="1024" ResizeMode="CanMinimize" Foreground="Black" Background="White" Icon="rsc/scribble.ico" WindowStartupLocation="CenterScreen" WindowStyle="ThreeDBorderWindow">
     <Grid>
         <Border BorderThickness="5" BorderBrush="#FF0003FF" Margin="10,10,10,180"  RenderTransformOrigin="0.509,0.213">
             <Canvas x:Name="myImage" Background="White" HorizontalAlignment="Left" VerticalAlignment="Top" MouseLeftButtonDown="myImage_MouseLeftButtonDown" RenderTransformOrigin="0.5,0.5" Margin="-0.8,-0.8,0,0" Height="524" Width="977" MouseMove="myImage_MouseMove" Cursor="Cross" OpacityMask="White" />
