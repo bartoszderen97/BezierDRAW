@@ -1,5 +1,4 @@
-﻿using System.Threading;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -18,29 +17,49 @@ namespace BezierDRAW
         private Point startBezierPoint, endBezierPoint, firstControlBezierPoint, secondControlBezierPoint;
         private Point[] myPoints;
         private string[] allModes = { "handline", "straigthline", "bezierline" };
-        private Line line;
+        private Line line, firstline;
+        private DoubleCollection dottedLine;
 
         public MainWindow()
         {
+            dottedLine = new DoubleCollection();
+            dottedLine.Add(4);
+            dottedLine.Add(2);
             InitializeComponent();
         }
 
-        private void DrawStraigthLine(Point p1, Point p2)
+        private void DeleteIfNeeded()
+        {
+            if (line != null)
+                myImage.Children.Remove(line);
+            if (myPoints != null)
+            {
+                for (int i = 0; i < myPoints.Length - 1; i++)
+                    myImage.Children.RemoveAt(0);
+            }
+        }
+        private void DrawStraigthLine(Point p1, Point p2, int color, bool ifDotted)
         {
             line = new Line();
-            line.Stroke = Brushes.Black;
+
+            if (color == 2) line.Stroke = Brushes.Green;
+            else line.Stroke = Brushes.Black;
+
+            if (ifDotted)
+                line.StrokeDashArray = dottedLine;
+
             line.X1 = p1.X;
             line.X2 = p2.X;
             line.Y1 = p1.Y;
             line.Y2 = p2.Y;
+
             line.StrokeThickness = 3;
             myImage.Children.Add(line);
             
         }
-
         private void DrawMyBezierCurve()
         {
-            MyBezierCurve.CalculateMyBezier(0.0078125, startBezierPoint, firstControlBezierPoint, secondControlBezierPoint, endBezierPoint);
+            MyBezierCurve.CalculateMyBezier(0.00390625, startBezierPoint, firstControlBezierPoint, secondControlBezierPoint, endBezierPoint);
             myPoints = MyBezierCurve.GetMyBezierPoints().ToArray();
             for(int i=0; i < myPoints.Length -1; i++)
             {
@@ -59,88 +78,43 @@ namespace BezierDRAW
         {
             if (e.LeftButton == MouseButtonState.Pressed && currentMode == "handline")
             {
-                line = new Line();
-                line.Stroke = Brushes.Black;
-                line.X1 = startPoint.X;
-                line.Y1 = startPoint.Y;
-                line.X2 = e.GetPosition(myImage).X;
-                line.Y2 = e.GetPosition(myImage).Y;
+                DrawStraigthLine(startPoint, e.GetPosition(myImage), 3, false);
                 startPoint = e.GetPosition(myImage);
-                line.StrokeThickness = 3;
-                myImage.Children.Add(line);
             }
             else if ((currentMode == "straigthline" || currentMode == "bezierline") && clickCounter == 1) 
             {
-                
-                if (e.LeftButton == MouseButtonState.Pressed)
-                {
-                    Thread.Sleep(100);
-                    if (currentMode == "straigthline")
-                    {
-                        clickCounter = 0;
-                        myStatusText.Text = "Wybrano tryb rysowania prostych odcinków. Podaj punkt początkowy.";
-                        line = null;
-                    }
-                    else
-                    {
-                        endPoint = e.GetPosition(myImage);
-                        myStatusText.Text = "Wybrano tryb rysowania krzywych Beziera. Podaj punkt końcowy.";
-                        firstControlBezierPoint = e.GetPosition(myImage);
-                        clickCounter = 2;
-                    }
-                    return;
-                }
 
-                if (line!=null)
-                    myImage.Children.Remove(line);
+                if (e.LeftButton == MouseButtonState.Pressed) return;
 
-                line = new Line();
-                line.Stroke = Brushes.Black;
-                line.X1 = startPoint.X;
-                line.Y1 = startPoint.Y;
-                line.X2 = e.GetPosition(myImage).X;
-                line.Y2 = e.GetPosition(myImage).Y;
-                line.StrokeThickness = 3;
-                myImage.Children.Add(line);
+                DeleteIfNeeded();
+                DrawStraigthLine(startPoint, e.GetPosition(myImage), 3, false);
 
             }
             else if (currentMode == "bezierline" && clickCounter == 2)
             {
-                if (e.LeftButton == MouseButtonState.Pressed)
-                {
-                    myStatusText.Text = "Wybrano tryb rysowania krzywych Beziera. Podaj drugi punkt kontrolny.";
-                    endBezierPoint = e.GetPosition(myImage);
-                    secondControlBezierPoint = firstControlBezierPoint;
-                    clickCounter = 4;
-                    return;
-                }
+                if (e.LeftButton == MouseButtonState.Pressed) return;
 
-                if (line != null)
-                    myImage.Children.Remove(line);
-                if (myPoints != null)
-                {
-                    for (int i = 0; i < myPoints.Length - 1; i++)
-                        myImage.Children.RemoveAt(0);
-                }
+                DeleteIfNeeded();
                 endBezierPoint = e.GetPosition(myImage);
-                secondControlBezierPoint = firstControlBezierPoint;
+                secondControlBezierPoint = e.GetPosition(myImage);
                 DrawMyBezierCurve();
             }
-            else if(currentMode == "bezierline" && clickCounter == 4)
+            else if(currentMode == "bezierline" && clickCounter == 3)
             {
-                if (line != null)
-                    myImage.Children.Remove(line);
-                if (myPoints != null)
-                {
-                    for (int i = 0; i < myPoints.Length - 1; i++)
-                        myImage.Children.RemoveAt(0);
-                }
+                if (e.LeftButton == MouseButtonState.Pressed) return;
+                DeleteIfNeeded();
                 secondControlBezierPoint = e.GetPosition(myImage);
+                DrawStraigthLine(endBezierPoint, e.GetPosition(myImage), 2, true);
                 DrawMyBezierCurve();
             }
         }
 
-        private void myImage_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        private void myImage_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            if (currentMode == "handline")
+                startPoint = e.GetPosition(myImage);
+        }
+        private void myImage_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
             if (currentMode == "")
                 myStatusText.Text = "Najpierw wybierz tryb!";
@@ -152,16 +126,14 @@ namespace BezierDRAW
                     myStatusText.Text = "Wybrano tryb rysowania prostych odcinków. Podaj punkt końcowy.";
                     startPoint = e.GetPosition(myImage);
                 }
-                else
+                else if (clickCounter == 2)
                 {
-                    myStatusText.Text = "Za szybko !!! Odczekaj dwie sekundy i podaj punkt początkowy jeszcze raz.";
-                    line = null;
                     clickCounter = 0;
+                    myStatusText.Text = "Wybrano tryb rysowania prostych odcinków. Podaj punkt początkowy.";
+                    line = null;
                 }
             }
-            else if (currentMode == "handline")
-                startPoint = e.GetPosition(myImage);
-            else if (currentMode == "bezierline" && (clickCounter == 0 || clickCounter == 4)) 
+            else if (currentMode == "bezierline")
             {
                 clickCounter++;
                 if (clickCounter == 1)
@@ -170,27 +142,63 @@ namespace BezierDRAW
                     startBezierPoint = e.GetPosition(myImage);
                     startPoint = startBezierPoint;
                 }
-                if (clickCounter == 5)
+                else if (clickCounter == 2)
                 {
+                    DeleteIfNeeded();
+                    endPoint = e.GetPosition(myImage);
+                    myStatusText.Text = "Wybrano tryb rysowania krzywych Beziera. Podaj punkt końcowy.";
+                    firstControlBezierPoint = e.GetPosition(myImage);
+                    firstline = new Line();
+                    firstline.X1 = startBezierPoint.X;
+                    firstline.X2 = firstControlBezierPoint.X;
+                    firstline.Y1 = startBezierPoint.Y;
+                    firstline.Y2 = firstControlBezierPoint.Y;
+                    firstline.Stroke = Brushes.Red;
+                    firstline.StrokeThickness = 3;
+                    firstline.StrokeDashArray = dottedLine;
+                    myImage.Children.Add(firstline);
+
+                }
+                else if (clickCounter == 3)
+                {
+                    myStatusText.Text = "Wybrano tryb rysowania krzywych Beziera. Podaj drugi punkt kontrolny.";
+                    endBezierPoint = e.GetPosition(myImage);
+                    secondControlBezierPoint = e.GetPosition(myImage);
+                }
+                else if (clickCounter == 4)
+                {
+                    DeleteIfNeeded();
+                    secondControlBezierPoint = e.GetPosition(myImage);
+                    
+                    DrawStraigthLine(endBezierPoint, secondControlBezierPoint, 2, true);
+                    DrawMyBezierCurve();
                     myStatusText.Text = "Wybrano tryb rysowania krzywych Beziera. Podaj punkt początkowy.";
                     clickCounter = 0;
                     myPoints = null;
                     line = null;
+                    firstline = null;
                 }
             }
         }
-       
+
         private void myButton_Click(object sender, RoutedEventArgs e)
         {
+            handlineButton.BorderBrush = Brushes.Black;
+            handlineButton.BorderThickness = new Thickness(1);
+            straigthlineButton.BorderBrush = Brushes.Black;
+            straigthlineButton.BorderThickness = new Thickness(1);
+            bezierlineButton.BorderBrush = Brushes.Black;
+            bezierlineButton.BorderThickness = new Thickness(1);
             Button mybtn = (Button)sender;
-            clickCounter = 0;
-            if (line != null)
-                myImage.Children.Remove(line);
-            if (myPoints != null)
+            if (mybtn.Name != "clearButton")
             {
-                for (int i = 0; i < myPoints.Length - 1; i++)
-                    myImage.Children.RemoveAt(0);
+                mybtn.BorderBrush = Brushes.Blue;
+                mybtn.BorderThickness = new Thickness(3);
             }
+            clickCounter = 0;
+            DeleteIfNeeded();
+            if (line != null)
+                myImage.Children.Remove(firstline);
             myPoints = null;
             line = null;
             switch (mybtn.Name)

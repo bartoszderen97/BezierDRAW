@@ -9,7 +9,7 @@
         Title="BezierDRAW!" Height="766" Width="1024" ResizeMode="CanMinimize" Foreground="Black" Background="White" Icon="rsc/scribble.ico" WindowStartupLocation="CenterScreen" WindowStyle="ThreeDBorderWindow">
     <Grid>
         <Border BorderThickness="5" BorderBrush="#FF0003FF" Margin="10,10,10,180"  RenderTransformOrigin="0.509,0.213">
-            <Canvas x:Name="myImage" Background="White" HorizontalAlignment="Left" VerticalAlignment="Top" MouseLeftButtonDown="myImage_MouseLeftButtonDown" RenderTransformOrigin="0.5,0.5" Margin="-0.8,-0.8,0,0" Height="524" Width="977" MouseMove="myImage_MouseMove" Cursor="Cross" OpacityMask="White" />
+            <Canvas x:Name="myImage" Background="White" HorizontalAlignment="Left" VerticalAlignment="Top" RenderTransformOrigin="0.5,0.5" Margin="-0.8,-0.8,0,0" Height="524" Width="977" MouseMove="myImage_MouseMove" Cursor="Cross" OpacityMask="White" PreviewMouseLeftButtonUp="myImage_PreviewMouseLeftButtonUp" PreviewMouseLeftButtonDown="myImage_PreviewMouseLeftButtonDown" />
         </Border>
         <StatusBar x:Name="myStatus" HorizontalAlignment="Left" Height="34" Margin="0,703,-0.4,-0.2" VerticalAlignment="Top" Width="1018" FontSize="20">
             <StatusBarItem Margin="0,-10,0,9.6">
@@ -18,17 +18,17 @@
         </StatusBar>
         <Button x:Name="exitButton" Content="Zakończ" HorizontalAlignment="Left" Margin="848,619,0,0" VerticalAlignment="Top" Width="120" Height="50" FontFamily="Times New Roman" FontSize="20" ToolTip="Naciśnij aby wyjść z programamu" Click="myButton_Click"/>
         <Button x:Name="clearButton" Content="Wyczyść" HorizontalAlignment="Left" Margin="687,619,0,0" VerticalAlignment="Top" Width="120" Height="50" FontFamily="Times New Roman" FontSize="20" ToolTip="Naciśnij aby wyczyścić pole do rysowania" Click="myButton_Click"/>
-        <Button x:Name="handlineButton" HorizontalAlignment="Left" Margin="64,625,0,0" VerticalAlignment="Top" Width="68" Height="44" ToolTip="Rysowanie krzywych odręcznie" Click="myButton_Click">
+        <Button x:Name="handlineButton" HorizontalAlignment="Left" Margin="64,625,0,0" VerticalAlignment="Top" Width="68" Height="44" ToolTip="Rysowanie krzywych odręcznie" Click="myButton_Click" BorderBrush="Blue">
             <StackPanel Orientation="Horizontal" Margin="0" Width="64" Height="40">
                 <Image Source="rsc/handline.png" Margin="0" Width="64" RenderTransformOrigin="0.131,0.474" />
             </StackPanel>
         </Button>
-        <Button x:Name="straigthlineButton" HorizontalAlignment="Left" Margin="137,625,0,0" VerticalAlignment="Top" Width="68" Height="44" ToolTip="Rysowanie prostych odcinków" Click="myButton_Click">
+        <Button x:Name="straigthlineButton" HorizontalAlignment="Left" Margin="137,625,0,0" VerticalAlignment="Top" Width="68" Height="44" ToolTip="Rysowanie prostych odcinków" Click="myButton_Click" BorderBrush="Blue">
             <StackPanel Orientation="Horizontal" Margin="0" Width="64" Height="40">
                 <Image Source="rsc/straigthline.png" Margin="0" Width="64" RenderTransformOrigin="0.131,0.474" />
             </StackPanel>
         </Button>
-        <Button x:Name="bezierlineButton" HorizontalAlignment="Left" Margin="210,625,0,0" VerticalAlignment="Top" Width="68" Height="44" ToolTip="Rysowanie krzywych Beziera na podstawie 4 punktów" Click="myButton_Click">
+        <Button x:Name="bezierlineButton" HorizontalAlignment="Left" Margin="210,625,0,0" VerticalAlignment="Top" Width="68" Height="44" ToolTip="Rysowanie krzywych Beziera na podstawie 4 punktów" Click="myButton_Click" BorderThickness="1" BorderBrush="Blue">
             <StackPanel Orientation="Horizontal" Margin="0" Width="64" Height="40">
                 <Image Source="rsc/bezierline.png" Margin="0" Width="64" RenderTransformOrigin="0.131,0.474" />
             </StackPanel>
